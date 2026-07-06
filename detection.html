@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How RytmoECG detects PVCs, pauses & irregular rhythm — RytmoECG</title>
+<meta name="description" content="RytmoECG runs three independent passes over your ECG: a live per-beat detector, an on-demand per-event second opinion, and a full-session re-scan. See how each one decides a beat is worth flagging, and why they sometimes disagree.">
+<link rel="canonical" href="https://rytmoecg.com/detection.html">
+<meta name="theme-color" content="#07090C">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="RytmoECG">
+<meta property="og:title" content="How RytmoECG detects PVCs, pauses & irregular rhythm">
+<meta property="og:description" content="Three independent passes over your ECG: live per-beat, per-event second opinion, and full-session re-scan. See how each decides something is worth flagging.">
+<meta property="og:url" content="https://rytmoecg.com/detection.html">
+<meta property="og:image" content="https://rytmoecg.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://rytmoecg.com/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- =================== NAV =================== -->
+<header class="nav">
+  <div class="wrap">
+    <a href="/" class="brand"><span class="pulse-dot"></span> RytmoECG</a>
+    <nav>
+      <a href="index.html#detect">Patterns</a>
+      <a href="index.html#algorithms">Algorithms</a>
+      <a href="detection.html" aria-current="page">Detection</a>
+      <a href="index.html#honest">Limits</a>
+    </nav>
+    <a href="index.html#download" class="cta">Get it</a>
+  </div>
+</header>
+
+<!-- =================== INTRO + HERO MONITOR =================== -->
+<section class="block">
+  <div class="wrap">
+    <p class="kicker">How detection works</p>
+    <h2>Three passes over the same heartbeat.</h2>
+    <p class="section-lead">
+      Catching an ectopic beat on a single-lead chest strap is a trade-off
+      between missing real events and inventing fake ones. RytmoECG does not try
+      to win that with one clever detector. It runs three independent passes,
+      each tuned for a different moment: while you record, when you open one
+      event, and over the whole recording afterwards.
+    </p>
+
+    <div class="det-monitor reveal">
+      <div class="det-monitor-top">
+        <span class="m-label">LEAD I &middot; 130 Hz &middot; one early beat, three readers</span>
+        <span class="m-right">SWEEP</span>
+      </div>
+      <svg class="det-svg" viewBox="0 0 1200 220" preserveAspectRatio="none" role="img" aria-label="ECG strip with one premature beat among normal beats">
+        <defs>
+          <pattern id="hero-sm" width="12" height="12" patternUnits="userSpaceOnUse">
+            <path d="M 12 0 L 0 0 0 12" fill="none" stroke="rgba(110,231,183,0.06)" stroke-width="0.5"/>
+          </pattern>
+          <pattern id="hero-lg" width="60" height="60" patternUnits="userSpaceOnUse">
+            <rect width="60" height="60" fill="url(#hero-sm)"/>
+            <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(110,231,183,0.13)" stroke-width="0.9"/>
+          </pattern>
+        </defs>
+        <rect width="1200" height="220" fill="url(#hero-lg)"/>
+        <line x1="497" y1="14" x2="497" y2="206" stroke="#F59E0B" stroke-width="1" stroke-dasharray="3 4" opacity="0.5"/>
+        <text x="497" y="206" text-anchor="middle" class="chart-num" fill="#F59E0B" font-size="11" opacity="0.85">early</text>
+        <path class="det-trace" pathLength="100" fill="none" stroke="#6EE7B7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+          d="M0,120 L30,120 Q50,108 70,120 L100,120 L112,128 L122,34 L132,205 L142,124 L152,120 Q180,88 215,120
+             L240,120 Q260,108 280,120 L310,120 L322,128 L332,34 L342,205 L352,124 L362,120 Q390,88 425,120
+             L470,120 L480,126 L489,48 L498,196 L507,123 L515,120
+             L690,120 Q710,108 730,120 L760,120 L772,128 L782,34 L792,205 L802,124 L812,120 Q840,88 875,120
+             L900,120 Q920,108 940,120 L970,120 L982,128 L992,34 L1002,205 L1012,124 L1022,120 Q1050,88 1085,120 L1200,120"/>
+      </svg>
+    </div>
+    <p class="micro" style="margin-top:12px;color:var(--dim)">
+      The amber marker is one premature beat. Whether it becomes an event depends
+      on which pass is looking, and that is the whole story of this page.
+    </p>
+  </div>
+</section>
+
+<!-- =================== THE THREE PASSES (RAIL) =================== -->
+<section class="block alt">
+  <div class="wrap">
+    <p class="kicker">The three passes</p>
+    <h2>Live, on demand, and after the fact.</h2>
+    <p class="section-lead">
+      Same algorithms, three contexts. The earlier the pass, the more
+      conservative it has to be; a live alarm you cannot un-see costs more than
+      a finding you chose to open.
+    </p>
+
+    <div class="passes-rail reveal">
+      <div class="pass-node warm">
+        <div class="pn-dot"></div>
+        <div class="pn-scale">per beat</div>
+        <h3>Live</h3>
+        <p>Runs on the streaming signal as each beat arrives. Immediate, but gated hard so a noisy stretch cannot spam events.</p>
+      </div>
+      <div class="pass-node">
+        <div class="pn-dot"></div>
+        <div class="pn-scale">per event</div>
+        <h3>Advanced Analysis</h3>
+        <p>A second opinion you trigger by opening one strip. Re-derives a local baseline and judges that window in isolation.</p>
+      </div>
+      <div class="pass-node cool">
+        <div class="pn-dot"></div>
+        <div class="pn-scale">per session</div>
+        <h3>Session re-scan</h3>
+        <p>Sweeps an entire recording after the fact by interval criteria, surfaces beats the live pass merged away, and adds them.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== PASS 1: LIVE + THRESHOLD GAUGE =================== -->
+<section class="block">
+  <div class="wrap">
+    <p class="kicker">Pass 1</p>
+    <h2>Live detection, on every beat.</h2>
+    <p class="section-lead">
+      As the Polar H10 streams 130 Hz lead I, Pan-Tompkins finds each R-peak,
+      a morphology classifier shapes every beat, and a stack of detectors runs
+      against the rolling beat history. Anything that fires goes through the same
+      capture path, so it inherits every guard before it ever becomes an event.
+    </p>
+
+    <div class="algos reveal">
+      <article class="algo">
+        <header><h3>What runs live</h3><span class="unit">per beat</span></header>
+        <p>Wide-complex capture, the rhythm-pattern detector (bigeminy, trigeminy, couplet, triplet, NSVT, idioventricular, PVC-with-compensatory-pause, PAC), long-pause (RR &gt; 2.0 s), the rules + CoreML irregular ensemble, and the isolated single-beat ectopy detector below.</p>
+      </article>
+      <article class="algo">
+        <header><h3>The guards it must clear</h3><span class="unit">four gates</span></header>
+        <p>Movement gate (accelerometer std-dev), hard SQI floor (mean SQI &ge; 0.50 over thirty beats), baseline-stability gate (DC drift, spread, peak excursion), and a per-kind cooldown. A run of events chains into one clip instead of dozens.</p>
+      </article>
+      <article class="algo">
+        <header><h3>Why it stays conservative</h3><span class="unit">design choice</span></header>
+        <p>Live is the only pass that interrupts you. A false "maybe PVC" mid-session erodes trust faster than a quiet miss you can still recover in pass two or three. So live errs toward silence when signal or context is ambiguous.</p>
+      </article>
+    </div>
+
+    <div class="gauge reveal">
+      <p class="kicker" style="margin-bottom:0">The bar each pass must clear to fire</p>
+      <div class="gauge-track">
+        <span class="gauge-mark" data-label="Advanced 0.55" style="left:34%;background:#6EE7B7"></span>
+        <span class="gauge-mark" data-label="Re-scan 0.70" style="left:46%;background:#60A5FA"></span>
+        <span class="gauge-mark" data-label="Live 0.85" style="left:80%;background:#F59E0B"></span>
+      </div>
+      <div class="gauge-ends"><span>lower bar, catches more</span><span>higher bar, fewer false alarms</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== ISOLATED ECTOPY + CHARTS =================== -->
+<section class="block alt">
+  <div class="wrap">
+    <p class="kicker">Inside pass 1</p>
+    <h2>Isolated single-beat ectopy.</h2>
+    <p class="section-lead">
+      A single premature beat with a compensatory pause is the classic "one PVC"
+      most people picture. The hard part on one lead is not finding it; it is not
+      drowning in false positives from respiratory sinus arrhythmia, where a
+      normal beat can land 20 % early followed by a longer one purely from
+      breathing. This detector catches the real thing while staying quiet on the
+      impostor.
+    </p>
+
+    <div class="det-monitor reveal">
+      <div class="det-monitor-top">
+        <span class="m-label">LEAD I &middot; local baseline window + early beat</span>
+        <span class="m-right">PASS 1</span>
+      </div>
+      <svg class="det-svg" viewBox="0 0 720 170" preserveAspectRatio="none" role="img" aria-label="Premature beat measured against the six beats it interrupted">
+        <defs>
+          <pattern id="ect-sm" width="12" height="12" patternUnits="userSpaceOnUse">
+            <path d="M 12 0 L 0 0 0 12" fill="none" stroke="rgba(110,231,183,0.06)" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="720" height="170" fill="url(#ect-sm)"/>
+        <rect x="18" y="36" width="350" height="92" rx="6" fill="rgba(110,231,183,0.08)" stroke="rgba(110,231,183,0.18)"/>
+        <text x="193" y="28" text-anchor="middle" class="chart-num" fill="#6EE7B7" font-size="11">local baseline window</text>
+        <path fill="none" stroke="#6EE7B7" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"
+          d="M0,95 L40,95 L48,100 L56,55 L64,118 L72,97 L90,95
+             L130,95 L138,100 L146,55 L154,118 L162,97 L180,95
+             L220,95 L228,100 L236,55 L244,118 L252,97 L270,95
+             L310,95 L318,100 L326,55 L334,118 L342,97 L360,95"/>
+        <path fill="none" stroke="#F59E0B" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"
+          d="M360,95 L400,95 L408,101 L415,62 L422,112 L429,96 L436,95
+             L560,95 L568,100 L576,55 L584,118 L592,97 L610,95 L720,95"/>
+        <line x1="415" y1="46" x2="415" y2="130" stroke="#F59E0B" stroke-width="1" stroke-dasharray="3 3" opacity="0.7"/>
+        <text x="430" y="150" text-anchor="middle" class="chart-num" fill="#F59E0B" font-size="11">20%+ early</text>
+        <line x1="436" y1="40" x2="560" y2="40" stroke="#60A5FA" stroke-width="1" opacity="0.7"/>
+        <text x="498" y="34" text-anchor="middle" class="chart-num" fill="#60A5FA" font-size="11">compensatory pause</text>
+      </svg>
+    </div>
+
+    <div class="algos reveal" style="margin-top:28px">
+      <article class="algo">
+        <header><h3>Local baseline</h3><span class="unit">6 prior beats</span></header>
+        <p>Prematurity is measured against the median of the six beats the early beat interrupted, not a session-wide average that drifts as your heart rate changes. The beat is judged against the rhythm it actually broke.</p>
+      </article>
+      <article class="algo">
+        <header><h3>Regular-background gate</h3><span class="unit">anti-RSA</span></header>
+        <p>At most one of those six beats may deviate more than 25 % from the local baseline. If the surrounding rhythm is already irregular, a single early-plus-pause is just normal variation, and belongs to the dedicated irregular and bigeminy paths, not here.</p>
+      </article>
+      <article class="algo">
+        <header><h3>Compensatory window</h3><span class="unit">0.96 to 1.12</span></header>
+        <p>The early interval plus the pause must sum to roughly twice the baseline; the ventricular signature, not the smoother give-and-take of breathing. The same window the per-event and full-session passes use.</p>
+      </article>
+      <article class="algo">
+        <header><h3>Quality and spacing</h3><span class="unit">SQI + cooldown</span></header>
+        <p>The candidate beat needs SQI &ge; 0.70 so a noise spike is not read as an early beat, an eight-second cooldown stops a borderline stretch from repeating, and chaining folds a burst into one reviewable clip.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- =================== COMPENSATORY PAUSE CHART =================== -->
+<section class="block">
+  <div class="wrap two-col">
+    <div>
+      <p class="kicker">The interval signature</p>
+      <h2>Short beat, long pause, the sum gives it away.</h2>
+      <p>
+        Plot successive RR intervals as bars and a real ectopic beat is obvious:
+        one bar drops well below baseline (the early beat), the next jumps well
+        above it (the pause), and the two together sum to roughly twice a normal
+        interval. That sum, not the QRS shape, is what every pass keys on.
+      </p>
+      <p>
+        A double-counted R-peak makes two short bars, never a short-then-long
+        pair, so it fails the sum test. A missed beat makes one long bar with no
+        preceding short one. The compensatory signature is specific on purpose.
+      </p>
+    </div>
+    <figure class="chart-card reveal" style="margin:0">
+      <div class="cc-head"><h3>RR intervals around one PVC</h3><span class="verdict-pill good">fires</span></div>
+      <p class="cc-sub">Bar height = interval length. Baseline 850 ms.</p>
+      <svg viewBox="0 0 720 300" class="det-svg" role="img" aria-label="Bar chart of RR intervals; one short early beat then one long compensatory pause">
+        <line x1="40" y1="108.3" x2="690" y2="108.3" stroke="rgba(255,255,255,0.16)" stroke-dasharray="2 5"/>
+        <text x="694" y="112" class="chart-num" fill="#5C6573" font-size="10">850</text>
+        <!-- bars -->
+        <rect x="56"  y="108.3" width="52" height="141.7" fill="#6EE7B7" fill-opacity="0.22"/>
+        <rect x="138" y="110.0" width="52" height="140.0" fill="#6EE7B7" fill-opacity="0.22"/>
+        <rect x="220" y="106.7" width="52" height="143.3" fill="#6EE7B7" fill-opacity="0.22"/>
+        <rect x="302" y="108.3" width="52" height="141.7" fill="#6EE7B7" fill-opacity="0.22"/>
+        <rect x="384" y="146.7" width="52" height="103.3" fill="#F59E0B" fill-opacity="0.85"/>
+        <rect x="466" y="70.0"  width="52" height="180.0" fill="#60A5FA" fill-opacity="0.8"/>
+        <rect x="548" y="108.3" width="52" height="141.7" fill="#6EE7B7" fill-opacity="0.22"/>
+        <rect x="630" y="106.7" width="52" height="143.3" fill="#6EE7B7" fill-opacity="0.22"/>
+        <!-- value labels -->
+        <g class="chart-num" font-size="11" text-anchor="middle" fill="#5C6573">
+          <text x="82"  y="268">850</text>
+          <text x="164" y="268">840</text>
+          <text x="246" y="268">860</text>
+          <text x="328" y="268">850</text>
+          <text x="410" y="268" fill="#F59E0B">620</text>
+          <text x="492" y="268" fill="#60A5FA">1080</text>
+          <text x="574" y="268">850</text>
+          <text x="656" y="268">860</text>
+        </g>
+        <!-- sum bracket -->
+        <line x1="384" y1="50" x2="518" y2="50" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+        <line x1="384" y1="50" x2="384" y2="58" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+        <line x1="518" y1="50" x2="518" y2="58" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+        <text x="451" y="40" text-anchor="middle" class="chart-num" fill="#ECEEF2" font-size="12">620 + 1080 = 1700 ms</text>
+        <text x="451" y="92" text-anchor="middle" class="chart-num" fill="#9099A8" font-size="11">2 x 850</text>
+      </svg>
+    </figure>
+  </div>
+</section>
+
+<!-- =================== RSA vs PVC TWIN CHARTS =================== -->
+<section class="block alt">
+  <div class="wrap">
+    <p class="kicker">Why an interval rule alone floods</p>
+    <h2>The impostor, and the real thing.</h2>
+    <p class="section-lead">
+      In a high-variability heart (RMSSD over 80 ms) a plain "20 % early plus a
+      longer beat" rule fires constantly on respiratory sinus arrhythmia, where
+      RR rises and falls smoothly with each breath. The regular-background gate
+      is what tells the two apart: a smooth swing has no single sharp outlier; a
+      PVC does.
+    </p>
+
+    <div class="twin-charts">
+      <figure class="chart-card reveal" style="margin:0">
+        <div class="cc-head"><h3>Respiratory sinus arrhythmia</h3><span class="verdict-pill quiet">we stay quiet</span></div>
+        <p class="cc-sub">RR rises and falls smoothly; no single outlier.</p>
+        <svg viewBox="0 0 360 200" class="det-svg" role="img" aria-label="RR intervals forming a smooth respiratory wave">
+          <line x1="20" y1="62" x2="340" y2="62" stroke="rgba(255,255,255,0.12)" stroke-dasharray="2 5"/>
+          <rect x="28"  y="73.5" width="26" height="96.5"  fill="#6EE7B7" fill-opacity="0.28"/>
+          <rect x="68"  y="68.4" width="26" height="101.6" fill="#6EE7B7" fill-opacity="0.28"/>
+          <rect x="108" y="62.0" width="26" height="108.0" fill="#6EE7B7" fill-opacity="0.28"/>
+          <rect x="148" y="55.7" width="26" height="114.3" fill="#6EE7B7" fill-opacity="0.28"/>
+          <rect x="188" y="58.2" width="26" height="111.8" fill="#6EE7B7" fill-opacity="0.28"/>
+          <rect x="228" y="63.3" width="26" height="106.7" fill="#6EE7B7" fill-opacity="0.28"/>
+          <rect x="268" y="68.4" width="26" height="101.6" fill="#6EE7B7" fill-opacity="0.28"/>
+          <rect x="308" y="72.2" width="26" height="97.8"  fill="#6EE7B7" fill-opacity="0.28"/>
+        </svg>
+      </figure>
+      <figure class="chart-card reveal" style="margin:0">
+        <div class="cc-head"><h3>Isolated PVC</h3><span class="verdict-pill fire">we fire</span></div>
+        <p class="cc-sub">Regular background, one sharp early beat, one pause.</p>
+        <svg viewBox="0 0 360 200" class="det-svg" role="img" aria-label="RR intervals regular except one short beat and one long pause">
+          <line x1="20" y1="62" x2="340" y2="62" stroke="rgba(255,255,255,0.12)" stroke-dasharray="2 5"/>
+          <rect x="28"  y="62.0"  width="26" height="108.0" fill="#6EE7B7" fill-opacity="0.28"/>
+          <rect x="68"  y="60.7"  width="26" height="109.3" fill="#6EE7B7" fill-opacity="0.28"/>
+          <rect x="108" y="62.0"  width="26" height="108.0" fill="#6EE7B7" fill-opacity="0.28"/>
+          <rect x="148" y="88.7"  width="26" height="81.3"  fill="#F59E0B" fill-opacity="0.85"/>
+          <rect x="188" y="35.4"  width="26" height="134.6" fill="#60A5FA" fill-opacity="0.8"/>
+          <rect x="228" y="62.0"  width="26" height="108.0" fill="#6EE7B7" fill-opacity="0.28"/>
+          <rect x="268" y="60.7"  width="26" height="109.3" fill="#6EE7B7" fill-opacity="0.28"/>
+          <rect x="308" y="62.0"  width="26" height="108.0" fill="#6EE7B7" fill-opacity="0.28"/>
+        </svg>
+      </figure>
+    </div>
+    <p class="footnote">
+      The honest cost: in very high HRV the gate will sometimes hold back a
+      borderline narrow beat, and occasionally let one through. That is
+      deliberate. On a single noisy lead you cannot separate a narrow PVC from
+      respiratory variation by timing alone; wide-complex beats are caught by
+      their shape on a separate path, and anything missed here is recoverable in
+      passes two and three.
+    </p>
+  </div>
+</section>
+
+<!-- =================== PASS 2: ADVANCED ANALYSIS =================== -->
+<section class="block">
+  <div class="wrap">
+    <p class="kicker">Pass 2</p>
+    <h2>Advanced Analysis, a per-event second opinion.</h2>
+    <p class="section-lead">
+      Open any event and tap Advanced Analysis. RytmoECG re-runs the full pipeline
+      against that one thirty-to-sixty-second strip in isolation, with a baseline
+      derived from the window itself. Because it is not the live, streaming
+      classifier, it can flag a beat the live pass merged into the dominant sinus
+      template.
+    </p>
+
+    <div class="algos reveal">
+      <article class="algo">
+        <header><h3>Classifier-independent</h3><span class="unit">interval criteria</span></header>
+        <p>It counts ectopy by timing: any beat 20 % or more early followed by a compensatory pause is ectopic regardless of how the morphology classifier labelled its QRS. This surfaces the PVC the live chain reported as "wide-complex: 0".</p>
+      </article>
+      <article class="algo">
+        <header><h3>A verdict, with its math</h3><span class="unit">four states</span></header>
+        <p>Likely arrhythmia, ambiguous, likely normal, or poor signal; with the supporting markers and every measured parameter listed, flag colours and all. It reports even a single ectopic beat, where the live pass deliberately would not.</p>
+      </article>
+      <article class="algo">
+        <header><h3>On your terms</h3><span class="unit">on demand</span></header>
+        <p>It never fires an alert; you choose to run it on a strip you are already looking at. That is why it can afford a lower bar than live: the cost of a borderline finding is a line of text, not an interruption.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- =================== PASS 3: SESSION RE-SCAN =================== -->
+<section class="block alt">
+  <div class="wrap">
+    <p class="kicker">Pass 3</p>
+    <h2>Session re-scan, over the whole recording.</h2>
+    <p class="section-lead">
+      A multi-hour recording can hide ectopy the live pass merged away beat by
+      beat. From a recorded session you can trigger a full re-scan: RytmoECG reads
+      the stored ECG and sweeps every beat by the same interval criteria as the
+      second opinion, then adds each hit as a reviewable event.
+    </p>
+
+    <div class="algos reveal">
+      <article class="algo">
+        <header><h3>Whole-recording sweep</h3><span class="unit">up to 30 min full-res</span></header>
+        <p>Re-runs Pan-Tompkins and a fresh classifier over the recording (capped so a 24 h Holter cannot pull millions of samples at once), independent of whatever the live session's template state happened to be.</p>
+      </article>
+      <article class="algo">
+        <header><h3>Interval, not morphology</h3><span class="unit">20 % early + pause</span></header>
+        <p>Each ectopic beat becomes an event carrying its own strip window, so you can see what came before and after. The exact pass that catches the beat the live morphology gate merged into sinus.</p>
+      </article>
+      <article class="algo">
+        <header><h3>Deduped against what exists</h3><span class="unit">no doubles</span></header>
+        <p>Hits within a second or so of an event already on the session are skipped, so re-scanning does not pile duplicates on top of what live already captured.</p>
+      </article>
+    </div>
+
+    <p class="footnote">
+      Where to find it: open a recorded session, then run the re-scan from its
+      detail view. It reports how many new events it added.
+    </p>
+  </div>
+</section>
+
+<!-- =================== ONE BEAT, THREE VERDICTS =================== -->
+<section class="block">
+  <div class="wrap">
+    <p class="kicker">When the passes disagree</p>
+    <h2>One beat, three verdicts.</h2>
+    <p class="section-lead">
+      The most common question: "I can see the early beat, Advanced Analysis
+      flags it, so why was there no live event?" Usually the live classifier
+      merged that beat into the dominant sinus template, so the shape-based path
+      saw nothing wide, and the live baseline at that instant was drifting, so
+      the timing looked less premature than it does against a clean window.
+    </p>
+
+    <div class="det-monitor reveal">
+      <div class="det-monitor-top">
+        <span class="m-label">LEAD I &middot; the same premature beat, read three ways</span>
+        <span class="m-right">VERDICTS</span>
+      </div>
+      <svg class="det-svg" viewBox="0 0 1000 190" preserveAspectRatio="none" role="img" aria-label="One premature beat marked on an ECG strip">
+        <defs>
+          <pattern id="ver-sm" width="12" height="12" patternUnits="userSpaceOnUse">
+            <path d="M 12 0 L 0 0 0 12" fill="none" stroke="rgba(110,231,183,0.06)" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="1000" height="190" fill="url(#ver-sm)"/>
+        <line x1="497" y1="14" x2="497" y2="176" stroke="#F59E0B" stroke-width="1" stroke-dasharray="3 4" opacity="0.6"/>
+        <text x="497" y="176" text-anchor="middle" class="chart-num" fill="#F59E0B" font-size="11">this beat</text>
+        <path class="det-trace" pathLength="100" fill="none" stroke="#6EE7B7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+          d="M0,105 L40,105 Q60,94 80,105 L110,105 L121,112 L131,30 L141,182 L151,109 L161,105 Q188,78 220,105
+             L260,105 Q280,94 300,105 L330,105 L341,112 L351,30 L361,182 L371,109 L381,105 Q408,78 440,105
+             L480,105 L489,111 L497,44 L505,178 L513,108 L521,105
+             L690,105 Q710,94 730,105 L760,105 L771,112 L781,30 L791,182 L801,109 L811,105 Q838,78 870,105
+             L910,105 Q930,94 950,105 L1000,105"/>
+      </svg>
+    </div>
+
+    <div class="algos reveal" style="margin-top:24px">
+      <article class="algo">
+        <header><h3>Live</h3><span class="verdict-pill fire">often missed</span></header>
+        <p>The classifier merged it into sinus (wide-complex: 0) and the drifting baseline softened the prematurity. The isolated-ectopy detector closes most of this gap in real time, but live still errs quiet when context is ambiguous.</p>
+      </article>
+      <article class="algo">
+        <header><h3>Advanced Analysis</h3><span class="verdict-pill good">flagged</span></header>
+        <p>Judged in isolation against a clean local baseline, by timing alone. The early-plus-pause sum clears the bar, so the strip reads "ambiguous" or "likely arrhythmia" with the markers listed.</p>
+      </article>
+      <article class="algo">
+        <header><h3>Session re-scan</h3><span class="verdict-pill cool">flagged</span></header>
+        <p>The same interval criteria over the whole recording surface it as a reviewable event, deduped against anything live already caught. The catch-all safety net.</p>
+      </article>
+    </div>
+
+    <p class="footnote">
+      The principle: layers, not one verdict. The same interval criteria run in
+      passes two and three, so a finding is reproducible, not a one-off. Nothing
+      leaves the device; all three passes run on your iPhone.
+    </p>
+  </div>
+</section>
+
+<!-- =================== DOWNLOAD =================== -->
+<section id="download" class="block alt download">
+  <div class="wrap center">
+    <p class="kicker">Get it</p>
+    <h2>See it on your own rhythm.</h2>
+    <p class="section-lead">
+      iPhone, iOS 17 or later. Requires a Polar H10 chest strap.
+    </p>
+    <a class="btn primary big" href="index.html#download">App Store; coming soon</a>
+    <p class="micro">
+      RytmoECG is a wellness app; not a medical device. It does not diagnose,
+      treat, or screen for any condition. Every detector phrases its result as a
+      possibility, never a diagnosis. If you have chest pain, shortness of breath,
+      or persistent palpitations, contact emergency services or your physician.
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap two-col">
+    <div>
+      <p class="brand small">RytmoECG</p>
+      <p class="micro">Built solo. No VC, no medical claims, no dark patterns.</p>
+    </div>
+    <div>
+      <p class="micro">
+        Mental-health helpline in Poland; 116 123 ( free, anonymous, twenty-four
+        seven ). Outside Poland, your local equivalent is one search away.
+      </p>
+      <p class="micro">Contact; b@snafux.pl</p>
+    </div>
+  </div>
+</footer>
+
+<script src="detection.js"></script>
+</body>
+</html>

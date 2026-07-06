@@ -1,0 +1,1184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RytmoECG — Polar H10 ECG app for HRV, PVCs & palpitations</title>
+<meta name="description" content="Turn a Polar H10 chest strap into a live single-lead ECG on your iPhone. Track HRV, count PVCs and pauses, record palpitations, review every beat. On-device, no cloud, no diagnosis. A wellness Holter alternative.">
+<meta name="keywords" content="Polar H10 ECG app, ECG iPhone app, PVC counter, heart palpitations recorder, HRV app, Holter alternative, single-lead ECG, chest strap ECG">
+<link rel="canonical" href="https://rytmoecg.com/">
+<meta name="theme-color" content="#07090C">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="RytmoECG">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RytmoECG">
+<meta property="og:title" content="RytmoECG — Polar H10 ECG app for HRV, PVCs & palpitations">
+<meta property="og:description" content="Turn a Polar H10 into a live single-lead ECG on your iPhone. Track HRV, count PVCs and pauses, record palpitations. On-device, no cloud, no diagnosis.">
+<meta property="og:url" content="https://rytmoecg.com/">
+<meta property="og:image" content="https://rytmoecg.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="RytmoECG — Polar H10 ECG app for HRV, PVCs & palpitations">
+<meta name="twitter:description" content="Turn a Polar H10 into a live single-lead ECG on your iPhone. HRV, PVC counting, palpitation recording. On-device, no cloud, no diagnosis.">
+<meta name="twitter:image" content="https://rytmoecg.com/og-image.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+
+<!-- Structured data: the app + publisher -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "RytmoECG",
+  "operatingSystem": "iOS 17.0 or later",
+  "applicationCategory": "HealthApplication",
+  "description": "A wellness iPhone app that turns a Polar H10 chest strap into a live single-lead ECG. Tracks HRV, counts PVCs, pauses and other rhythm patterns, records palpitations, and runs every algorithm on-device. Not a medical device; does not diagnose.",
+  "url": "https://rytmoecg.com/",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "requirements": "Requires a Polar H10 chest strap",
+  "featureList": [
+    "Live 130 Hz single-lead ECG from Polar H10",
+    "Heart rate variability (RMSSD, SDNN, pNN50, Poincare)",
+    "PVC, PAC, couplet, bigeminy, pause and irregular-rhythm detection",
+    "Palpitation event recording with 15 s pre-event buffer",
+    "On-device processing, no cloud"
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Does the Polar H10 record an ECG?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The Polar H10 streams a raw single-lead ECG signal at 130 Hz over Bluetooth, but it does not store or display it on its own. RytmoECG receives that stream on your iPhone, renders it as a live ECG strip on real millimetre paper scale, and analyses every beat on-device." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I count PVCs or track palpitations with a chest strap?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. RytmoECG flags premature ventricular contractions (PVCs), premature atrial contractions (PACs), couplets, bigeminy, pauses and irregular rhythm, and records a 30-second ECG clip around each one so you can review what happened. It is a wellness tool for observing patterns, not a diagnosis." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is RytmoECG a medical device or a Holter monitor?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. RytmoECG is a wellness app, not a medical device and not a certified Holter monitor. It does not diagnose, treat or screen for any condition. It is a transparent way to observe your own heart rhythm and export a PDF to share with a clinician." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does my ECG data leave my phone?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. Every algorithm runs on your iPhone. There is no cloud server and nothing is uploaded unless you explicitly tap Share to export a PDF or CSV." }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<!-- =================== NAV =================== -->
+<header class="nav">
+  <div class="wrap">
+    <a href="/" class="brand"><span class="pulse-dot"></span> RytmoECG</a>
+    <nav>
+      <a href="#algorithms">Algorithms</a>
+      <a href="detection.html">Detection</a>
+      <a href="#personas">Personas</a>
+      <a href="#demo">Demo</a>
+      <a href="#faq">FAQ</a>
+      <a href="#honest">Limits</a>
+    </nav>
+    <a href="#download" class="cta">Get it</a>
+  </div>
+</header>
+
+<!-- =================== HERO (spatial + hospital monitor) =================== -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow"><span class="lozenge live">Live</span> &nbsp; Polar H10 ECG app &middot; on-device &middot; paper-referenced</p>
+      <h1>Your heart,<br>in numbers you can audit.</h1>
+      <p class="lead">
+        RytmoECG streams the 130 Hz single-lead ECG from a Polar H10, runs every
+        detector on your iPhone, and shows the formula, paper, and failure mode
+        behind every value. No cloud. No diagnosis.
+      </p>
+      <div class="hero-cta">
+        <a href="#download" class="btn primary">Download for iPhone</a>
+        <a href="#demo" class="btn ghost">Try it live</a>
+      </div>
+      <p class="micro hero-micro">
+        Wellness app, not a medical device. Requires a Polar H10.
+        iOS 17 or later.
+      </p>
+    </div>
+
+    <!-- iPhone mockup + floating dashboard cards -->
+    <div class="hero-stage" id="hero-stage">
+      <!-- Floating cards that escape the phone frame -->
+      <div class="fcard fcard-rmssd" data-depth="2">
+        <div class="fcard-label">RMSSD</div>
+        <div class="fcard-value">48 <span class="fcard-unit">ms</span></div>
+        <div class="fcard-sub">vagal tone</div>
+      </div>
+      <div class="fcard fcard-qtc" data-depth="-1">
+        <div class="fcard-label">QTc Fridericia</div>
+        <div class="fcard-value">412 <span class="fcard-unit">ms</span></div>
+        <div class="fcard-sub">typical</div>
+      </div>
+      <div class="fcard fcard-sqi" data-depth="1">
+        <div class="fcard-label">Signal</div>
+        <div class="fcard-value">0.94</div>
+        <div class="fcard-sub">clean</div>
+      </div>
+      <div class="fcard fcard-lfhf" data-depth="-2">
+        <div class="fcard-label">LF / HF</div>
+        <div class="fcard-value">1.23</div>
+        <div class="fcard-sub">balanced</div>
+      </div>
+      <div class="fcard fcard-breath" data-depth="3">
+        <div class="fcard-label">Breath</div>
+        <div class="fcard-value">14 <span class="fcard-unit">/min</span></div>
+      </div>
+
+      <!-- Phone frame -->
+      <div class="phone" data-depth="0">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <!-- Status pill row -->
+          <div class="phone-status">
+            <span class="ph-dot live-dot"></span>
+            <span class="ph-status-text">Streaming &middot; 02:14</span>
+          </div>
+
+          <!-- Big HR readout (hospital-monitor style) -->
+          <div class="phone-hr">
+            <div class="ph-label">HEART RATE</div>
+            <div class="ph-hr-row">
+              <span class="ph-hr-num">72</span>
+              <span class="ph-hr-unit">bpm</span>
+            </div>
+            <div class="ph-hr-sub">min 58 &middot; max 124</div>
+          </div>
+
+          <!-- Inline ECG with the trace extending beyond phone -->
+          <svg class="phone-ecg" viewBox="0 0 320 90" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <pattern id="ph-grid-sm" width="10" height="10" patternUnits="userSpaceOnUse">
+                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(110,231,183,0.07)" stroke-width="0.5"/>
+              </pattern>
+              <pattern id="ph-grid-lg" width="50" height="50" patternUnits="userSpaceOnUse">
+                <rect width="50" height="50" fill="url(#ph-grid-sm)"/>
+                <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(110,231,183,0.15)" stroke-width="0.8"/>
+              </pattern>
+            </defs>
+            <rect width="320" height="90" fill="url(#ph-grid-lg)"/>
+            <path id="phone-trace" pathLength="100"
+                  d="M0,45 L25,45 Q35,40 45,45 L55,45 L60,48 L65,15 L70,75 L75,46 L80,45 Q100,30 120,45 L160,45
+                     L170,45 Q180,40 190,45 L200,45 L205,48 L210,15 L215,75 L220,46 L225,45 Q250,30 275,45 L320,45"
+                  fill="none" stroke="#6EE7B7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+
+          <!-- Three pill stats at bottom of phone -->
+          <div class="phone-stats">
+            <div class="ph-stat"><div class="ph-stat-k">EVENTS</div><div class="ph-stat-v">2</div></div>
+            <div class="ph-stat"><div class="ph-stat-k">RHYTHM</div><div class="ph-stat-v ph-stat-good">Steady</div></div>
+            <div class="ph-stat"><div class="ph-stat-k">STRESS</div><div class="ph-stat-v">32</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ECG line that "escapes" the phone frame -->
+      <svg class="escape-trace" viewBox="0 0 700 100" preserveAspectRatio="none" aria-hidden="true">
+        <path pathLength="100"
+              d="M0,50 L60,50 Q80,42 100,50 L160,50 L172,55 L182,8 L192,90 L202,52 L212,50 Q240,30 280,50 L370,50
+                 L382,55 L392,8 L402,90 L412,52 L422,50 Q450,30 490,50 L580,50 L592,55 L602,8 L612,90 L622,52 L632,50 Q665,30 700,50"
+              fill="none" stroke="#6EE7B7" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
+              class="escape-path"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- =================== TRY LIVE DEMO =================== -->
+<section id="demo" class="block demo-block">
+  <div class="wrap">
+    <p class="kicker">Try it</p>
+    <h2>Live demo, no install.</h2>
+    <p class="section-lead">
+      Pick a sample rhythm and watch the same algorithms that ship in the app
+      run on it in your browser. No cloud round-trip; the analysis is computed
+      from the strip you see.
+    </p>
+
+    <div class="demo-frame">
+      <div class="demo-controls">
+        <label class="demo-label">Sample</label>
+        <select id="demo-sample" class="demo-select">
+          <option value="sinus">Clean sinus &middot; 70 bpm</option>
+          <option value="af">Atrial fibrillation &middot; irregular</option>
+          <option value="bigeminy">Bigeminy &middot; PVC every other beat</option>
+          <option value="brady">Bradycardia &middot; 45 bpm</option>
+          <option value="lowsqi">Low signal &middot; loose electrode</option>
+        </select>
+        <button id="demo-run" class="btn primary demo-run">Analyze</button>
+      </div>
+
+      <div class="demo-monitor">
+        <div class="demo-monitor-top">
+          <span class="m-label">LEAD I &middot; 130 Hz &middot; <span id="demo-sample-name">Clean sinus</span></span>
+          <span class="demo-runlight" id="demo-runlight"></span>
+        </div>
+        <svg id="demo-svg" viewBox="0 0 1200 200" preserveAspectRatio="none" class="demo-svg" aria-hidden="true">
+          <defs>
+            <pattern id="demo-grid-sm" width="10" height="10" patternUnits="userSpaceOnUse">
+              <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(110,231,183,0.06)" stroke-width="0.5"/>
+            </pattern>
+            <pattern id="demo-grid-lg" width="50" height="50" patternUnits="userSpaceOnUse">
+              <rect width="50" height="50" fill="url(#demo-grid-sm)"/>
+              <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(110,231,183,0.14)" stroke-width="1"/>
+            </pattern>
+          </defs>
+          <rect width="1200" height="200" fill="url(#demo-grid-lg)"/>
+          <path id="demo-trace" fill="none" stroke="#6EE7B7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <g id="demo-rdots"></g>
+        </svg>
+      </div>
+
+      <div class="demo-output" id="demo-output">
+        <div class="demo-card">
+          <div class="dc-label">HR</div>
+          <div class="dc-value" id="dc-hr">...</div>
+          <div class="dc-unit">bpm</div>
+        </div>
+        <div class="demo-card">
+          <div class="dc-label">RMSSD</div>
+          <div class="dc-value" id="dc-rmssd">...</div>
+          <div class="dc-unit">ms</div>
+        </div>
+        <div class="demo-card">
+          <div class="dc-label">SDNN</div>
+          <div class="dc-value" id="dc-sdnn">...</div>
+          <div class="dc-unit">ms</div>
+        </div>
+        <div class="demo-card">
+          <div class="dc-label">QTc</div>
+          <div class="dc-value" id="dc-qtc">...</div>
+          <div class="dc-unit">ms</div>
+        </div>
+        <div class="demo-card demo-card-verdict">
+          <div class="dc-label">VERDICT</div>
+          <div class="dc-value" id="dc-verdict">...</div>
+          <div class="dc-unit" id="dc-verdict-sub"></div>
+        </div>
+      </div>
+
+      <p class="demo-footnote">
+        The demo runs simplified versions of the same detectors that ship in
+        the app. Real signal from your strap gives more nuance; here we use
+        synthetic but physiologically plausible rhythms.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- =================== HOW IT WORKS =================== -->
+<section id="pipeline" class="block">
+  <div class="wrap">
+    <p class="kicker">The pipeline</p>
+    <h2>Raw chest-strap signal, fifteen stages, zero cloud.</h2>
+    <p class="section-lead">
+      The Polar H10 streams 130 samples per second of single-lead ECG. RytmoECG
+      takes that buffer end-to-end on your iPhone. Nothing leaves the device
+      unless you tap Share.
+    </p>
+
+    <div class="pipeline-grid">
+      <div class="ppl"><span class="ppl-num">01</span><b>BLE stream</b><span>130 Hz lead I + accelerometer + battery</span></div>
+      <div class="ppl"><span class="ppl-num">02</span><b>Pan-Tompkins</b><span>Streaming R-peak detector with adaptive thresholds</span></div>
+      <div class="ppl"><span class="ppl-num">03</span><b>Per-beat features</b><span>Morphology, amplitude, premature flag, SQI</span></div>
+      <div class="ppl"><span class="ppl-num">04</span><b>Rolling HRV</b><span>RMSSD, SDNN, pNN50, Poincare SD1/SD2</span></div>
+      <div class="ppl"><span class="ppl-num">05</span><b>Rhythm patterns</b><span>10+ ectopic and reentrant detectors</span></div>
+      <div class="ppl"><span class="ppl-num">06</span><b>CoreML AF</b><span>CNN-BiLSTM trained on PhysioNet CinC 2017</span></div>
+      <div class="ppl"><span class="ppl-num">07</span><b>QT analyser</b><span>T-wave tangent method per beat</span></div>
+      <div class="ppl"><span class="ppl-num">08</span><b>Biomarkers</b><span>DC, AC via PRSA; HRT after PVCs</span></div>
+      <div class="ppl"><span class="ppl-num">09</span><b>Movement gate</b><span>Accelerometer std-dev, three states</span></div>
+      <div class="ppl"><span class="ppl-num">10</span><b>Event capture</b><span>Chained recording with thirty-second silence tail</span></div>
+      <div class="ppl"><span class="ppl-num">11</span><b>HRV spectrum</b><span>4 Hz RR resample + Hann window + vDSP FFT → LF / HF / VLF</span></div>
+      <div class="ppl"><span class="ppl-num">12</span><b>Non-linear HRV</b><span>DFA alpha1 / alpha2 + Sample Entropy on RR</span></div>
+      <div class="ppl"><span class="ppl-num">13</span><b>Breathing rate</b><span>HF peak frequency x 60</span></div>
+      <div class="ppl"><span class="ppl-num">14</span><b>HR zones + drift</b><span>Time-in-zone Z1-Z5; cardiac drift slope</span></div>
+      <div class="ppl"><span class="ppl-num">15</span><b>Wellness scores</b><span>Stress + Readiness vs 30-day personal baseline</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== PQRST ANATOMY =================== -->
+<section id="anatomy" class="block alt">
+  <div class="wrap">
+    <p class="kicker">Anatomy of one heartbeat</p>
+    <h2>P, Q, R, S, T; and every interval RytmoECG measures.</h2>
+    <p class="section-lead">
+      Every cardiac cycle is a five-wave story; atria depolarise, ventricles
+      depolarise, ventricles repolarise. The intervals between them are what
+      separate a healthy rhythm from one worth investigating. RytmoECG measures
+      each one and labels them honestly.
+    </p>
+
+    <figure class="anatomy">
+      <svg viewBox="0 0 1000 420" class="pqrst-svg" role="img" aria-label="Annotated PQRST complex">
+        <defs>
+          <pattern id="grid-sm-a" width="10" height="10" patternUnits="userSpaceOnUse">
+            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(110,231,183,0.06)" stroke-width="0.5"/>
+          </pattern>
+          <pattern id="grid-lg-a" width="50" height="50" patternUnits="userSpaceOnUse">
+            <rect width="50" height="50" fill="url(#grid-sm-a)"/>
+            <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(110,231,183,0.16)" stroke-width="1"/>
+          </pattern>
+        </defs>
+        <rect x="50" y="40" width="900" height="280" fill="url(#grid-lg-a)" stroke="rgba(255,255,255,0.06)"/>
+
+        <!-- Baseline -->
+        <line x1="50" y1="220" x2="950" y2="220" stroke="rgba(255,255,255,0.08)" stroke-dasharray="2 4"/>
+
+        <!-- PQRST trace -->
+        <path d="M50,220
+                 L150,220
+                 Q200,180 250,220
+                 L320,220
+                 L340,235
+                 L355,60
+                 L370,290
+                 L385,225
+                 L420,220
+                 L520,220
+                 Q580,140 640,220
+                 L950,220"
+              fill="none" stroke="#6EE7B7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+        <!-- Wave labels -->
+        <g class="wave-label">
+          <text x="200" y="160" text-anchor="middle">P</text>
+          <text x="340" y="250" text-anchor="middle">Q</text>
+          <text x="355" y="50" text-anchor="middle">R</text>
+          <text x="370" y="305" text-anchor="middle">S</text>
+          <text x="580" y="120" text-anchor="middle">T</text>
+        </g>
+
+        <!-- Intervals (brackets below) -->
+        <g class="interval">
+          <!-- PR interval -->
+          <line x1="155" y1="340" x2="345" y2="340" stroke="#6EE7B7" stroke-width="1.5"/>
+          <line x1="155" y1="335" x2="155" y2="345" stroke="#6EE7B7" stroke-width="1.5"/>
+          <line x1="345" y1="335" x2="345" y2="345" stroke="#6EE7B7" stroke-width="1.5"/>
+          <text x="250" y="365" text-anchor="middle" class="iv-label">PR  120 to 200 ms</text>
+
+          <!-- QRS duration -->
+          <line x1="340" y1="380" x2="390" y2="380" stroke="#F59E0B" stroke-width="1.5"/>
+          <line x1="340" y1="375" x2="340" y2="385" stroke="#F59E0B" stroke-width="1.5"/>
+          <line x1="390" y1="375" x2="390" y2="385" stroke="#F59E0B" stroke-width="1.5"/>
+          <text x="365" y="405" text-anchor="middle" class="iv-label warm">QRS  60 to 100 ms</text>
+
+          <!-- QT interval -->
+          <line x1="340" y1="100" x2="640" y2="100" stroke="#60A5FA" stroke-width="1.5"/>
+          <line x1="340" y1="95" x2="340" y2="105" stroke="#60A5FA" stroke-width="1.5"/>
+          <line x1="640" y1="95" x2="640" y2="105" stroke="#60A5FA" stroke-width="1.5"/>
+          <text x="490" y="85" text-anchor="middle" class="iv-label cool">QT  380 to 440 ms</text>
+        </g>
+
+        <!-- Scale -->
+        <g class="scale">
+          <text x="60" y="395" class="scale-text">25 mm/s  &middot;  10 mm/mV  &middot;  1 large box = 200 ms</text>
+        </g>
+      </svg>
+      <figcaption>
+        ECG at standard paper speed; each small grid square = 40 ms x 0.1 mV.
+        RytmoECG measures the R-R series for HRV, the QRS width for morphology,
+        and the QT interval (corrected per Fridericia) for repolarisation.
+      </figcaption>
+    </figure>
+
+    <div class="wave-defs">
+      <div class="wd">
+        <h4>P wave</h4>
+        <p>Atrial depolarisation. Roughly 80 to 120 ms wide, under 0.25 mV. Single-lead chest-strap geometry makes the P-wave unreliable; RytmoECG does not separate atrial flutter from AF for that reason.</p>
+      </div>
+      <div class="wd">
+        <h4>QRS complex</h4>
+        <p>Ventricular depolarisation. Normal width 60 to 100 ms; wide complex above 120 ms suggests ventricular origin or bundle branch block. RytmoECG flags wide-complex beats as suspect PVCs.</p>
+      </div>
+      <div class="wd">
+        <h4>T wave</h4>
+        <p>Ventricular repolarisation. We locate T-end with the tangent method (Lepeschkin &amp; Surawicz 1952); the slope of the descending limb is extrapolated to the isoelectric line.</p>
+      </div>
+      <div class="wd">
+        <h4>PR interval</h4>
+        <p>Atrioventricular conduction time. Outside 120 to 200 ms suggests block or pre-excitation. RytmoECG does not target PR programmatically (single-lead noise on P-wave); we surface it inside Advanced Analysis as a measurement, not a flag.</p>
+      </div>
+      <div class="wd">
+        <h4>QT interval</h4>
+        <p>Total ventricular electrical event. Strongly HR-dependent. RytmoECG reports the running median of the last two hundred beats; corrected via Fridericia (QT / RR^1/3), which holds up better than Bazett at the extremes of HR.</p>
+      </div>
+      <div class="wd">
+        <h4>RR interval</h4>
+        <p>The time between successive R-peaks; the rolling RR-series is the input to every HRV metric we publish. PVC and SQI rejection ensure a single artefact does not corrupt the trend.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== DETECTIONS GALLERY =================== -->
+<section id="detect" class="block">
+  <div class="wrap">
+    <p class="kicker">What RytmoECG catches</p>
+    <h2>Ten rhythm patterns,<br>one ML atrial-fibrillation model.</h2>
+    <p class="section-lead">
+      Each strip below is the exact shape the detector looks for. We capture
+      fifteen seconds of ECG <em>before</em> the event from a ring buffer, then
+      keep recording for thirty seconds of clean rhythm. If another event fires
+      in that window, the recording extends; you get one clip of the whole burst,
+      with a tally like "bigeminy x 9 &middot; couplet x 2".
+    </p>
+
+    <div class="rhythms">
+
+      <!-- SINUS -->
+      <article class="rhythm">
+        <header><h3>Sinus rhythm</h3><span class="tag tag-good">baseline</span></header>
+        <svg viewBox="0 0 600 120" class="rhythm-svg" aria-hidden="true">
+          <rect width="600" height="120" fill="url(#strip-grid)"/>
+          <defs>
+            <pattern id="strip-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(110,231,183,0.08)" stroke-width="0.5"/>
+            </pattern>
+          </defs>
+          <path d="M0,70 L80,70 Q92,62 104,70 L130,70 L140,75 L148,30 L156,95 L164,72 L180,70 Q200,50 220,70
+                   L280,70 L290,75 L298,30 L306,95 L314,72 L330,70 Q350,50 370,70
+                   L430,70 L440,75 L448,30 L456,95 L464,72 L480,70 Q500,50 520,70 L600,70"
+                fill="none" stroke="#6EE7B7" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+        </svg>
+        <p class="rhythm-desc"><b>What it is.</b> Regular rhythm originating in the SA node. RR intervals tight, narrow QRS, T-waves upright. RytmoECG shows "Steady" when this holds.</p>
+        <p class="rhythm-desc"><b>How we detect it.</b> RR coefficient of variation under 6 %, no wide complexes for thirty consecutive beats, irregular detector silent.</p>
+      </article>
+
+      <!-- PVC -->
+      <article class="rhythm">
+        <header><h3>PVC; premature ventricular contraction</h3><span class="tag tag-warn">wide complex</span></header>
+        <svg viewBox="0 0 600 120" class="rhythm-svg" aria-hidden="true">
+          <path d="M0,70 L80,70 L88,75 L96,30 L104,95 L112,72 L120,70 L240,70
+                   L255,70 L265,80 L275,15 L285,15 L295,100 L305,100 L315,72 L330,70 L470,70
+                   L480,75 L488,30 L496,95 L504,72 L520,70 L600,70"
+                fill="none" stroke="#F59E0B" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+          <g class="rhythm-mark">
+            <line x1="280" y1="10" x2="280" y2="115" stroke="#F59E0B" stroke-width="1" stroke-dasharray="3 3" opacity="0.6"/>
+            <text x="280" y="118" text-anchor="middle">PVC</text>
+            <line x1="330" y1="10" x2="470" y2="10" stroke="#F59E0B" stroke-width="1" opacity="0.5"/>
+            <text x="400" y="22" text-anchor="middle" class="brk">compensatory pause</text>
+          </g>
+        </svg>
+        <p class="rhythm-desc"><b>What it is.</b> A beat that fires early from a ventricular focus. Wide ( &gt; 120 ms ), bizarre morphology, often followed by a compensatory pause.</p>
+        <p class="rhythm-desc"><b>How we detect it.</b> Beat classified wide-complex by the morphology classifier, prematurity flagged ( RR shorter than 85 % of running median ), then pause classifier checks whether pre-RR + post-RR sums to ~2 x baseline ( PVC ) or ~1.85x ( PAC ).</p>
+      </article>
+
+      <!-- COUPLET -->
+      <article class="rhythm">
+        <header><h3>Couplet</h3><span class="tag tag-warn">two consecutive</span></header>
+        <svg viewBox="0 0 600 120" class="rhythm-svg" aria-hidden="true">
+          <path d="M0,70 L80,70 L88,75 L96,30 L104,95 L112,72 L130,70 L220,70
+                   L230,80 L240,15 L250,15 L260,100 L268,100
+                   L278,80 L288,15 L298,15 L308,100 L316,100 L325,72 L340,70 L490,70
+                   L498,75 L506,30 L514,95 L522,72 L540,70 L600,70"
+                fill="none" stroke="#F59E0B" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+          <g class="rhythm-mark">
+            <line x1="240" y1="10" x2="306" y2="10" stroke="#F59E0B" stroke-width="1" opacity="0.6"/>
+            <text x="273" y="22" text-anchor="middle" class="brk">couplet</text>
+          </g>
+        </svg>
+        <p class="rhythm-desc"><b>What it is.</b> Two consecutive wide-complex beats. More electrically irritable than a singleton PVC.</p>
+        <p class="rhythm-desc"><b>How we detect it.</b> Two wide-complex beats back-to-back, both premature relative to baseline.</p>
+      </article>
+
+      <!-- BIGEMINY -->
+      <article class="rhythm">
+        <header><h3>Bigeminy</h3><span class="tag tag-amber">alternating pattern</span></header>
+        <svg viewBox="0 0 600 120" class="rhythm-svg" aria-hidden="true">
+          <path d="M0,70 L40,70 L48,75 L56,30 L64,95 L72,72 L90,70 L130,70
+                   L140,80 L150,15 L160,15 L170,100 L178,100 L190,72 L210,70 L250,70
+                   L258,75 L266,30 L274,95 L282,72 L300,70 L340,70
+                   L350,80 L360,15 L370,15 L380,100 L388,100 L400,72 L420,70 L460,70
+                   L468,75 L476,30 L484,95 L492,72 L510,70 L550,70
+                   L558,80 L568,15 L578,15 L588,100 L596,100"
+                fill="none" stroke="#FBBF24" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+          <g class="rhythm-mark">
+            <text x="56" y="118" text-anchor="middle">N</text>
+            <text x="150" y="118" text-anchor="middle" class="warn-t">V</text>
+            <text x="266" y="118" text-anchor="middle">N</text>
+            <text x="360" y="118" text-anchor="middle" class="warn-t">V</text>
+            <text x="476" y="118" text-anchor="middle">N</text>
+            <text x="568" y="118" text-anchor="middle" class="warn-t">V</text>
+          </g>
+        </svg>
+        <p class="rhythm-desc"><b>What it is.</b> Every other beat is ventricular. Normal-PVC-normal-PVC pattern sustained for many cycles.</p>
+        <p class="rhythm-desc"><b>How we detect it.</b> Pattern detector sees the N-V-N-V cadence sustained over at least eight beats with stable RR intervals between the singletons.</p>
+      </article>
+
+      <!-- TRIGEMINY -->
+      <article class="rhythm">
+        <header><h3>Trigeminy</h3><span class="tag tag-amber">every third</span></header>
+        <svg viewBox="0 0 600 120" class="rhythm-svg" aria-hidden="true">
+          <path d="M0,70 L30,70 L38,75 L46,30 L54,95 L62,72 L80,70 L120,70
+                   L128,75 L136,30 L144,95 L152,72 L170,70 L210,70
+                   L220,80 L230,15 L240,15 L250,100 L258,100 L275,72 L295,70 L335,70
+                   L343,75 L351,30 L359,95 L367,72 L385,70 L425,70
+                   L433,75 L441,30 L449,95 L457,72 L475,70 L515,70
+                   L525,80 L535,15 L545,15 L555,100 L563,100 L580,72 L600,70"
+                fill="none" stroke="#FBBF24" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+          <g class="rhythm-mark">
+            <text x="46" y="118" text-anchor="middle">N</text>
+            <text x="136" y="118" text-anchor="middle">N</text>
+            <text x="230" y="118" text-anchor="middle" class="warn-t">V</text>
+            <text x="351" y="118" text-anchor="middle">N</text>
+            <text x="441" y="118" text-anchor="middle">N</text>
+            <text x="535" y="118" text-anchor="middle" class="warn-t">V</text>
+          </g>
+        </svg>
+        <p class="rhythm-desc"><b>What it is.</b> Every third beat is a PVC. Common in caffeine, stress, electrolyte shifts.</p>
+        <p class="rhythm-desc"><b>How we detect it.</b> N-N-V cadence sustained for two full cycles ( six beats minimum ); cooldown twenty seconds.</p>
+      </article>
+
+      <!-- NSVT -->
+      <article class="rhythm">
+        <header><h3>NSVT; non-sustained VT</h3><span class="tag tag-bad">4 to 30 consecutive</span></header>
+        <svg viewBox="0 0 600 120" class="rhythm-svg" aria-hidden="true">
+          <path d="M0,70 L60,70 L68,75 L76,30 L84,95 L92,72 L110,70 L170,70
+                   L178,80 L186,15 L194,15 L202,100 L210,100
+                   L218,80 L226,15 L234,15 L242,100 L250,100
+                   L258,80 L266,15 L274,15 L282,100 L290,100
+                   L298,80 L306,15 L314,15 L322,100 L330,100
+                   L338,80 L346,15 L354,15 L362,100 L370,100
+                   L378,80 L386,15 L394,15 L402,100 L410,100
+                   L425,72 L450,70 L510,70 L518,75 L526,30 L534,95 L542,72 L560,70 L600,70"
+                fill="none" stroke="#EF4444" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+          <g class="rhythm-mark">
+            <line x1="186" y1="10" x2="394" y2="10" stroke="#EF4444" stroke-width="1.2" opacity="0.7"/>
+            <text x="290" y="22" text-anchor="middle" class="bad-t">six consecutive ventricular beats</text>
+          </g>
+        </svg>
+        <p class="rhythm-desc"><b>What it is.</b> Four or more consecutive ventricular beats but lasting under thirty seconds. Triggers a cardiology referral on a Holter; we flag it the same way.</p>
+        <p class="rhythm-desc"><b>How we detect it.</b> Four or more wide-complex beats in a row with HR &gt; 100 bpm; capture window automatically extends until thirty seconds of clean rhythm follow.</p>
+      </article>
+
+      <!-- AF -->
+      <article class="rhythm">
+        <header><h3>Atrial fibrillation; CoreML</h3><span class="tag tag-bad">irregular irregular</span></header>
+        <svg viewBox="0 0 600 120" class="rhythm-svg" aria-hidden="true">
+          <path d="M0,68 Q15,64 30,72 Q50,76 70,66 Q90,72 105,70
+                   L113,75 L121,28 L129,98 L137,72
+                   Q160,68 180,74 Q200,70 215,66
+                   L226,72 L234,32 L242,96 L250,72
+                   Q280,68 305,72 L312,72 L320,76 L328,30 L336,98 L344,73
+                   Q380,66 405,72 L411,72 L419,76 L427,30 L435,98 L443,73
+                   Q470,72 490,68 L500,72 L508,72 L516,30 L524,98 L532,73 Q565,68 600,72"
+                fill="none" stroke="#EF4444" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+          <g class="rhythm-mark">
+            <text x="40" y="118" text-anchor="middle" class="bad-t">no P-waves &middot; chaotic baseline &middot; irregular RR</text>
+          </g>
+        </svg>
+        <p class="rhythm-desc"><b>What it is.</b> Atria fibrillate; ventricles respond irregularly. No P-waves, chaotic baseline, RR intervals "irregularly irregular".</p>
+        <p class="rhythm-desc"><b>How we detect it.</b> CNN-BiLSTM with attention pooling trained on PhysioNet CinC 2017 ( F1 0.81 holdout ); runs every fifteen seconds on the current ECG buffer, ensembled with the rules-based irregular detector.</p>
+      </article>
+
+      <!-- LONG PAUSE -->
+      <article class="rhythm">
+        <header><h3>Long pause</h3><span class="tag tag-bad">RR &gt; 2.0 s</span></header>
+        <svg viewBox="0 0 600 120" class="rhythm-svg" aria-hidden="true">
+          <path d="M0,70 L60,70 L68,75 L76,30 L84,95 L92,72 L110,70 L160,70
+                   L168,75 L176,30 L184,95 L192,72 L210,70
+                   L450,70
+                   L458,75 L466,30 L474,95 L482,72 L500,70 L600,70"
+                fill="none" stroke="#60A5FA" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+          <g class="rhythm-mark">
+            <line x1="210" y1="10" x2="450" y2="10" stroke="#60A5FA" stroke-width="1.2" opacity="0.7"/>
+            <text x="330" y="22" text-anchor="middle" class="cool-t">2.4 s pause</text>
+          </g>
+        </svg>
+        <p class="rhythm-desc"><b>What it is.</b> A gap between heartbeats exceeding two seconds. Can be benign ( vagal tone ) or significant ( sinus arrest, AV block ).</p>
+        <p class="rhythm-desc"><b>How we detect it.</b> Any RR interval &gt; 2.0 s after PVC exclusion. Captured as a discrete event so you can see what came before and after.</p>
+      </article>
+
+      <!-- IRREGULAR RR -->
+      <article class="rhythm">
+        <header><h3>Sustained irregularity</h3><span class="tag tag-amber">RR variability</span></header>
+        <svg viewBox="0 0 600 120" class="rhythm-svg" aria-hidden="true">
+          <path d="M0,70 L40,70 L48,75 L56,30 L64,95 L72,72 L90,70 L160,70
+                   L168,75 L176,30 L184,95 L192,72 L210,70 L240,70
+                   L248,75 L256,30 L264,95 L272,72 L290,70 L370,70
+                   L378,75 L386,30 L394,95 L402,72 L420,70 L450,70
+                   L458,75 L466,30 L474,95 L482,72 L500,70 L600,70"
+                fill="none" stroke="#FBBF24" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+        </svg>
+        <p class="rhythm-desc"><b>What it is.</b> RR intervals vary widely without a fixed pattern, but morphology stays narrow. A pre-clinical heads-up before AF or just respiratory sinus arrhythmia at a high amplitude.</p>
+        <p class="rhythm-desc"><b>How we detect it.</b> RR coefficient of variation &gt; 12 % sustained over twenty beats with narrow QRS throughout.</p>
+      </article>
+
+      <!-- PAC -->
+      <article class="rhythm">
+        <header><h3>PAC; premature atrial contraction</h3><span class="tag tag-amber">no comp pause</span></header>
+        <svg viewBox="0 0 600 120" class="rhythm-svg" aria-hidden="true">
+          <path d="M0,70 L70,70 Q82,62 94,70 L120,70 L128,75 L136,30 L144,95 L152,72 L170,70 L230,70
+                   Q238,60 246,70 L260,70 L267,75 L274,38 L281,90 L287,72 L300,70 L380,70
+                   Q392,62 404,70 L430,70 L438,75 L446,30 L454,95 L462,72 L480,70 Q500,52 520,70 L600,70"
+                fill="none" stroke="#FBBF24" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+          <g class="rhythm-mark">
+            <line x1="246" y1="10" x2="287" y2="10" stroke="#FBBF24" stroke-width="1" stroke-dasharray="3 3" opacity="0.7"/>
+            <text x="266" y="22" text-anchor="middle" class="amber-t">PAC, narrow, no compensatory pause</text>
+          </g>
+        </svg>
+        <p class="rhythm-desc"><b>What it is.</b> An early beat from an atrial focus. Narrow QRS ( unlike a PVC ), often morphologically distinct, no full compensatory pause.</p>
+        <p class="rhythm-desc"><b>How we detect it.</b> Premature beat with narrow QRS, then compensatory-pause classifier rules out PVC; ratio of pre-RR + post-RR to 2 x baseline below 0.95.</p>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- =================== QT DETAIL =================== -->
+<section id="qt" class="block alt">
+  <div class="wrap two-col">
+    <div>
+      <p class="kicker">QT interval, in detail</p>
+      <h2>The tangent method, drawn at last.</h2>
+      <p>
+        Finding the end of the T-wave by eye is notoriously fiddly; the
+        canonical workaround is to extrapolate the tangent of the descending
+        T-wave limb down to the isoelectric line. RytmoECG does this per beat,
+        rejects beats with SQI below 0.70, and reports the running median of
+        the last two hundred beats.
+      </p>
+      <p>
+        QT is highly heart-rate dependent. RytmoECG shows the Fridericia
+        correction by default ( QT / RR ^ 1/3 ); the Bazett correction is
+        available in Advanced Analysis. On a noisy single-lead 130 Hz signal
+        we treat QTc as a trend marker only; not a clinical QTc.
+      </p>
+    </div>
+    <figure class="qt-figure">
+      <svg viewBox="0 0 600 280" class="qt-svg" role="img" aria-label="T-wave tangent method">
+        <defs>
+          <pattern id="qt-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(110,231,183,0.08)" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="600" height="280" fill="url(#qt-grid)"/>
+        <line x1="0" y1="180" x2="600" y2="180" stroke="rgba(255,255,255,0.1)" stroke-dasharray="2 4"/>
+
+        <!-- QRS + T -->
+        <path d="M0,180 L100,180 L115,190 L130,40 L145,240 L160,182 L180,180 Q260,80 380,180 L600,180"
+              fill="none" stroke="#6EE7B7" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+
+        <!-- Tangent extension (orange dashed) -->
+        <line x1="285" y1="120" x2="430" y2="225" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="4 4"/>
+
+        <!-- T-peak marker -->
+        <circle cx="260" cy="80" r="4" fill="#F59E0B"/>
+        <text x="260" y="65" text-anchor="middle" class="iv-label warm">T-peak</text>
+
+        <!-- T-end marker -->
+        <circle cx="395" cy="180" r="4" fill="#F59E0B"/>
+        <text x="395" y="205" text-anchor="middle" class="iv-label warm">T-end ( tangent + 40 ms offset )</text>
+
+        <!-- QT bracket -->
+        <line x1="115" y1="255" x2="395" y2="255" stroke="#60A5FA" stroke-width="1.5"/>
+        <line x1="115" y1="250" x2="115" y2="260" stroke="#60A5FA" stroke-width="1.5"/>
+        <line x1="395" y1="250" x2="395" y2="260" stroke="#60A5FA" stroke-width="1.5"/>
+        <text x="255" y="275" text-anchor="middle" class="iv-label cool">QT</text>
+      </svg>
+      <figcaption>
+        T-peak located in a 150 to 400 ms window after the R-peak; tangent of
+        the descending limb extrapolated to baseline; forty-millisecond offset
+        added for QRS-onset compensation.
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- =================== POINCARE =================== -->
+<section id="poincare" class="block">
+  <div class="wrap two-col">
+    <figure class="poincare-figure">
+      <svg viewBox="0 0 380 380" class="poincare-svg" role="img" aria-label="Poincare plot of RR intervals">
+        <defs>
+          <pattern id="poin-grid" width="38" height="38" patternUnits="userSpaceOnUse">
+            <path d="M 38 0 L 0 0 0 38" fill="none" stroke="rgba(110,231,183,0.08)" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="380" height="380" fill="url(#poin-grid)"/>
+
+        <!-- axes -->
+        <line x1="40" y1="340" x2="360" y2="340" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+        <line x1="40" y1="340" x2="40" y2="20" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+        <text x="200" y="370" text-anchor="middle" class="iv-label">RR(n) ms</text>
+        <text x="22" y="180" text-anchor="middle" transform="rotate(-90 22 180)" class="iv-label">RR(n+1) ms</text>
+
+        <!-- identity line -->
+        <line x1="40" y1="340" x2="360" y2="20" stroke="rgba(96,165,250,0.5)" stroke-dasharray="3 4" stroke-width="1"/>
+
+        <!-- ellipse showing SD1/SD2 -->
+        <ellipse cx="200" cy="180" rx="90" ry="32" transform="rotate(-45 200 180)" fill="rgba(110,231,183,0.10)" stroke="#6EE7B7" stroke-width="1.2"/>
+
+        <!-- SD1 / SD2 arrows -->
+        <line x1="200" y1="180" x2="263" y2="117" stroke="#6EE7B7" stroke-width="1.6"/>
+        <line x1="200" y1="180" x2="220" y2="200" stroke="#F59E0B" stroke-width="1.6"/>
+        <text x="278" y="105" text-anchor="middle" class="iv-label">SD2 ( long-term )</text>
+        <text x="245" y="215" text-anchor="middle" class="iv-label warm">SD1 ( short-term )</text>
+
+        <!-- scatter dots -->
+        <g fill="#6EE7B7" opacity="0.85">
+          <circle cx="180" cy="185" r="2"/>
+          <circle cx="195" cy="172" r="2"/>
+          <circle cx="210" cy="158" r="2"/>
+          <circle cx="220" cy="160" r="2"/>
+          <circle cx="170" cy="200" r="2"/>
+          <circle cx="160" cy="218" r="2"/>
+          <circle cx="155" cy="225" r="2"/>
+          <circle cx="240" cy="135" r="2"/>
+          <circle cx="225" cy="145" r="2"/>
+          <circle cx="190" cy="180" r="2"/>
+          <circle cx="205" cy="170" r="2"/>
+          <circle cx="215" cy="160" r="2"/>
+          <circle cx="175" cy="195" r="2"/>
+          <circle cx="200" cy="170" r="2"/>
+          <circle cx="210" cy="165" r="2"/>
+          <circle cx="195" cy="178" r="2"/>
+          <circle cx="185" cy="190" r="2"/>
+          <circle cx="180" cy="182" r="2"/>
+          <circle cx="220" cy="155" r="2"/>
+          <circle cx="232" cy="145" r="2"/>
+        </g>
+      </svg>
+      <figcaption>
+        Each dot is one beat plotted ( RR_n , RR_n+1 ). A tight ellipse aligned
+        with the identity line means a regular rhythm. AF spreads the dots into
+        a starburst; PVCs sit far off the diagonal.
+      </figcaption>
+    </figure>
+    <div>
+      <p class="kicker">Poincare plot</p>
+      <h2>Heart rate variability,<br>drawn instead of summarised.</h2>
+      <p>
+        The Poincare plot is the most honest HRV visual; each beat is a point
+        on a scatter. SD1 ( perpendicular spread ) reflects short-term
+        parasympathetic variation. SD2 ( spread along the identity line )
+        reflects long-term tone.
+      </p>
+      <p>
+        RytmoECG renders this live as a Canvas on the dashboard; you see ectopic
+        beats fly off the diagonal in real time. AF turns the cluster into a
+        starburst; sinus arrhythmia stretches the ellipse along SD2 without
+        widening SD1.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- =================== ALGORITHMS =================== -->
+<section id="algorithms" class="block alt">
+  <div class="wrap">
+    <p class="kicker">All algorithms, all references</p>
+    <h2>Twenty-plus detectors,<br>one paper for each.</h2>
+    <p class="section-lead">
+      Each measurement is computed on-device. We show what it means, how RytmoECG
+      computes it, the reference paper, and where it can fail. The same content
+      lives inside the app on the Methodology page.
+    </p>
+
+    <!-- Three differentiators get hero treatment; the catalog follows below. -->
+    <div class="algos-featured">
+      <article class="algo algo-featured">
+        <header><h3>Atrial fibrillation (CoreML)</h3><span class="unit">F1 0.81</span></header>
+        <p class="featured-lead">
+          A CNN-BiLSTM with attention pooling trained on PhysioNet CinC 2017.
+          Runs on-device every fifteen seconds, ensembled with the rules-based
+          irregular detector.
+        </p>
+        <p><b>How.</b> Thirty-second window normalised, fed through the model. Threshold from model metadata (`optimal_threshold`); we display a five-state pill: dormant, learning, sinus, watching, AF likely.</p>
+        <p><b>Limits.</b> CinC 2017 holdout F1 of 0.81 is good for single-lead; field validation across users is ongoing. RytmoECG never says "you have atrial fibrillation"; it says "rhythm consistent with AF, show a clinician".</p>
+        <p><b>Reference.</b> PhysioNet / CinC Challenge 2017; Clifford et al., Computing in Cardiology 2017.</p>
+      </article>
+      <article class="algo algo-featured">
+        <header><h3>Heart Rate Turbulence + DC / AC</h3><span class="unit">Lancet 2006 / 1999</span></header>
+        <p class="featured-lead">
+          Two cardiac autonomic biomarkers that sit between consumer fitness
+          metrics and clinical risk stratification.
+        </p>
+        <p><b>How.</b> Phase-Rectified Signal Averaging (Bauer 2006) computes deceleration and acceleration capacity per their original weighting. HRT (Schmidt 1999) averages the RR pattern around each confirmed PVC for turbulence onset and slope.</p>
+        <p><b>Limits.</b> DC / AC need 400+ beats. HRT needs five or more clean PVCs in the session.</p>
+        <p><b>Reference.</b> Bauer et al., Lancet 2006; Schmidt et al., Lancet 1999.</p>
+      </article>
+      <article class="algo algo-featured">
+        <header><h3>QT / QTc with tangent method</h3><span class="unit">Circulation 1952</span></header>
+        <p class="featured-lead">
+          Per-beat QT measured via the tangent-of-the-T-wave-descending-limb
+          method, plus a +40 ms QRS-onset offset, plus a SQI gate.
+        </p>
+        <p><b>How.</b> T-peak located in 150-400 ms after R; tangent extrapolated to baseline. QT = (T-end - R-peak) + 40 ms. Reported as the running median over the last 200 beats, both Bazett and Fridericia.</p>
+        <p><b>Limits.</b> Single-lead 130 Hz makes the T-wave noisy. We treat QTc as a trend marker, not a clinical QTc. Beats below SQI 0.70 excluded.</p>
+        <p><b>Reference.</b> Lepeschkin &amp; Surawicz, Circulation 1952; Fridericia, Acta Med Scand 1920.</p>
+      </article>
+    </div>
+
+    <h3 class="algos-catalog-title">The catalog</h3>
+    <p class="algos-catalog-lead">
+      Every other algorithm that ships in the app. Same depth on the
+      Methodology page inside; this is the index.
+    </p>
+
+    <div class="algos">
+      <article class="algo">
+        <header><h3>Heart rate; meanHR</h3><span class="unit">bpm</span></header>
+        <p><b>How.</b> Rolling mean of 60 / RR over the last sixty beats; min and max gated by a five-beat warmup.</p>
+        <p><b>Reference.</b> LITFL ECG rate interpretation.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>HRV; RMSSD, SDNN, pNN50, pNN200</h3><span class="unit">ms / %</span></header>
+        <p><b>How.</b> Task Force 1996 standard on PVC-rejected, SQI-filtered RR series. RMSSD = root mean square of successive RR differences; SDNN = std of all NN; pNN50 / pNN200 = share of successive differences &gt; 50 / 200 ms.</p>
+        <p><b>Reference.</b> Task Force ESC / NASPE, Circulation 1996; Shaffer &amp; Ginsberg PMC5624990.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>QRS duration</h3><span class="unit">ms</span></header>
+        <p><b>How.</b> Per beat, Q-onset is located by back-search from R-peak; S-end by forward-search; both stop when the signal returns within a 50 uV band of the baseline. Width = ( S-end - Q-onset ) / sampleRate. Rolling median over the SQI-filtered series.</p>
+        <p><b>Limits.</b> Single lead at 130 Hz; we use baseline-return rather than slope-onset because the latter is noise-sensitive at this rate.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>J-point amplitude</h3><span class="unit">uV</span></header>
+        <p><b>How.</b> Voltage 20 ms after S-end, baseline-subtracted, converted to microvolts. Session mean over the SQI-filtered beats.</p>
+        <p><b>Limits.</b> A wellness proxy for ST-segment level; not a diagnostic ST measurement on a single lead.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>T-wave polarity</h3><span class="unit">%</span></header>
+        <p><b>How.</b> For each beat, classify the largest T-extremum ( 150-400 ms after R-peak ) as positive or inverted relative to baseline. meanTPositive = % of positive T-waves over the session.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>Spectral 2-8 Hz energy ( meanHF )</h3><span class="unit">%</span></header>
+        <p><b>How.</b> Real-input FFT via Accelerate vDSP on a power-of-two slice of the 30 s ECG ring buffer; Hann window applied to reduce leakage. The metric is the ratio of in-band power to total power, refreshed every five seconds.</p>
+        <p><b>Limits.</b> Non-specific; reflects rapid fluctuations of any origin ( sharp QRS energy, motion, noise ). Useful to compare conditions on the same subject; not clinical.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>Signal amplitude ( meanSystole )</h3><span class="unit">uV</span></header>
+        <p><b>How.</b> Exponential moving average of mean |sample| in microvolts. A simple "is the strap making good contact today?" marker.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>Poincare SD1 / SD2</h3><span class="unit">ms</span></header>
+        <p><b>How.</b> Scatter of ( RR_n , RR_n+1 ); SD1 = std perpendicular to identity, SD2 = std parallel. Rendered live.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>HR exertion ( HR span )</h3><span class="unit">bpm</span></header>
+        <p><b>How.</b> Smoothed instantaneous HR series ( window of five beats ), max minus min. Descriptive, requires no user input.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>HREI ( TRIMP-Banister )</h3><span class="unit">load</span></header>
+        <p><b>How.</b> HR reserve = ( avgHR - restHR ) / ( maxHR - restHR ), clamped to [0, 1]. HREI = duration_minutes x HR_reserve x sex_factor ( 1.92 male, 1.67 female ). Settings live under Personal in Settings; no entry required for the metric to still surface a generic value.</p>
+        <p><b>Reference.</b> Banister, E.W. Modeling Elite Athletic Performance, 1991.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>HR recovery</h3><span class="unit">bpm</span></header>
+        <p><b>How.</b> Drop from peak HR to lowest HR in the sixty seconds that follow the peak. Standard fitness signal for vagal reactivation.</p>
+        <p><b>Reference.</b> Cole et al., NEJM 1999.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>Signal Quality Index</h3><span class="unit">0..1</span></header>
+        <p><b>How.</b> Default-to-trust; score starts at 1.0, only deducts for clear-cut problems ( implausible amplitude, baseline drift, off-physiology RR ). Rolling mean of last thirty beats shown as the Signal pill.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>Movement gate</h3><span class="unit">three states</span></header>
+        <p><b>How.</b> Three-second std-dev of accelerometer magnitude. Thresholds: standstill &lt; 0.04 g, light &lt; 0.15 g, moving &ge; 0.15 g.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>HRV frequency-domain (LF / HF / VLF)</h3><span class="unit">ms² / ratio</span></header>
+        <p><b>How.</b> RR-series resampled to 4 Hz with linear interpolation, Hann-windowed, real-input FFT via Accelerate vDSP. Power integrated per Task Force 1996 bands: VLF 0.0033-0.04 Hz, LF 0.04-0.15 Hz, HF 0.15-0.40 Hz. LF/HF ratio published as the autonomic-balance metric.</p>
+        <p><b>Reference.</b> Task Force ESC / NASPE, Circulation 1996.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>Breathing rate from RSA</h3><span class="unit">/min</span></header>
+        <p><b>How.</b> Free byproduct of the HRV spectrum: the dominant frequency inside the HF band corresponds to respiratory sinus arrhythmia. Multiply by sixty for breaths per minute. Typical 10-20 /min at rest.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>DFA alpha1 / alpha2</h3><span class="unit">scaling exponent</span></header>
+        <p><b>How.</b> Detrended Fluctuation Analysis on the integrated mean-removed RR series. Linear fit slope of log(fluctuation) vs log(box size) for short scales (4-16 beats, alpha1) and long scales (16-64 beats, alpha2). The endurance community uses alpha1 = 0.75 as a heuristic for the first lactate threshold.</p>
+        <p><b>Reference.</b> Peng et al., Chaos 1995; Rogero, Gronwald et al. 2020.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>Sample Entropy + ApEn</h3><span class="unit">nats</span></header>
+        <p><b>How.</b> Non-linear complexity of the RR series. SampEn = -ln(matches at m+1 / matches at m), m=2, r=0.2 x SD. ApEn computed similarly. Lower values mean more regular rhythm; high entropy is associated with healthy variability.</p>
+        <p><b>Reference.</b> Richman &amp; Moorman, AJP-Heart 2000; Pincus, PNAS 1991.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>HR drift</h3><span class="unit">bpm per 10 min</span></header>
+        <p><b>How.</b> Linear regression of smoothed instantaneous HR over the session. Reported as drift rate plus R^2 so you know how steady the workload actually was. Smaller drift at sustained effort = better aerobic fitness.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>Stress &amp; Readiness scores</h3><span class="unit">0..100</span></header>
+        <p><b>How.</b> Both computed from a 30-day baseline of your own sessions, never anyone else's. <i>Stress</i> = mean of three normalised inputs (RMSSD drop, resting HR rise, LF/HF rise). <i>Readiness</i> = RMSSD lift (60 %) + resting HR low (40 %). Every input is shown next to the score; no black box.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>Sleep HRV cross-section</h3><span class="unit">via HealthKit</span></header>
+        <p><b>How.</b> Pulls sleep windows from HealthKit, buckets each RytmoECG session as "night" or "day", and reports the median RMSSD and HR per bucket. Healthy autonomic recovery shows higher RMSSD overnight than during day; we make the gap visible.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>Pre / post workout HRV</h3><span class="unit">Δ RMSSD</span></header>
+        <p><b>How.</b> For each HealthKit workout, locate the nearest RytmoECG session within 8 h before and 12 h after. Report the delta RMSSD so you can see whether the bout left your vagal tone elevated, depressed, or unchanged.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>Calendar heatmap</h3><span class="unit">365 days</span></header>
+        <p><b>How.</b> GitHub-style 53 x 7 cell grid; each cell is one day, colour-coded by your chosen metric (RMSSD, mean HR, or session count). A year of recording visible without scrolling. Tap to switch metric.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>HR zones (Z1-Z5)</h3><span class="unit">% maxHR · time in zone</span></header>
+        <p><b>How.</b> Five-zone breakdown by percent of personal maxHR (set in Settings). Each beat contributes its RR interval to the matching zone; per-session bars show time and percent for each. Standard endurance-coaching layout.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>CSV export</h3><span class="unit">research format</span></header>
+        <p><b>How.</b> Every session can be exported as plain CSV: time_seconds, rr_seconds, hr_bpm, sqi per beat, plus a header comment block with sample rate, device, and timestamp. Drop straight into Python / R / MATLAB.</p>
+      </article>
+
+      <article class="algo">
+        <header><h3>Advanced Analysis per event</h3><span class="unit">verdict</span></header>
+        <p><b>How.</b> Re-runs every detector against a single thirty-to-sixty-second strip in isolation; lists all parameters with flag colours. Verdict: likely arrhythmia, ambiguous, likely normal, or poor signal.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- =================== DETECTION GUARDRAILS =================== -->
+<!-- =================== PERSONAS =================== -->
+<section id="personas" class="block">
+  <div class="wrap">
+    <p class="kicker">Three personas, one app</p>
+    <h2>Same compute,<br>three skins.</h2>
+    <p class="section-lead">
+      RytmoECG computes everything for everyone, but a researcher, a patient
+      and an athlete want very different things foregrounded. Pick a display
+      mode in Settings; the dashboard re-arranges around what matters to you.
+      Nothing is hidden from view, only re-prioritised.
+    </p>
+
+    <div class="personas">
+      <article class="persona persona-nerd">
+        <header>
+          <span class="persona-icon">∑</span>
+          <h3>Researcher</h3>
+        </header>
+        <p class="persona-lead">Maximum density. The default.</p>
+        <ul class="persona-points">
+          <li>All metrics on Now, formulas inline.</li>
+          <li>HRV spectrum + DFA / Sample Entropy pinned.</li>
+          <li>Tap any tile for the paper + failure mode.</li>
+          <li>CSV / EDF exports one swipe away.</li>
+        </ul>
+      </article>
+
+      <article class="persona persona-patient">
+        <header>
+          <span class="persona-icon">♥</span>
+          <h3>Patient</h3>
+        </header>
+        <p class="persona-lead">Simplified Now. RytmoECG answers, you breathe.</p>
+        <ul class="persona-points">
+          <li>HR + rhythm verdict only on the front screen.</li>
+          <li>"Looks steady" or "Worth recording" plain copy.</li>
+          <li>Show-to-doctor PDF one tap from any event.</li>
+          <li>Detector jargon out of sight.</li>
+        </ul>
+      </article>
+
+      <article class="persona persona-athlete">
+        <header>
+          <span class="persona-icon">⏱</span>
+          <h3>Athlete</h3>
+        </header>
+        <p class="persona-lead">Training emphasis. Zones up front.</p>
+        <ul class="persona-points">
+          <li>Live HR zone widget on Now.</li>
+          <li>HR drift + recovery + HREI surfaced.</li>
+          <li>HRV trends pinned for daily readiness.</li>
+          <li>HealthKit cross-check with your workouts.</li>
+        </ul>
+      </article>
+    </div>
+
+    <p class="footnote">
+      The mode does not change what is computed. Every detector runs the same
+      way regardless of skin; we are not hiding scary numbers from the patient
+      mode, just not putting them where you would have to look at them.
+    </p>
+  </div>
+</section>
+
+<section id="guardrails" class="block">
+  <div class="wrap">
+    <p class="kicker">How RytmoECG avoids false alarms</p>
+    <h2>Three gates before any auto-event fires.</h2>
+    <p class="section-lead">
+      Most wellness apps that flag arrhythmias get noisy fast; poor signal,
+      movement artefacts and respiratory sinus variation all fake textbook
+      patterns. RytmoECG stacks three guards on top of every detector so you
+      do not get spammed with "low signal · maybe PVC" alerts.
+    </p>
+
+    <div class="algos">
+      <article class="algo">
+        <header><h3>1. Movement gate</h3><span class="unit">accelerometer</span></header>
+        <p>If on-strap accelerometer std-dev is above 0.15 g (active movement) for the last three seconds, all auto-event capture is suppressed outright. Light motion (0.04 to 0.15 g) reduces confidence by 25 %.</p>
+      </article>
+      <article class="algo">
+        <header><h3>2. Hard SQI gate</h3><span class="unit">signal quality</span></header>
+        <p>Below 0.50 mean SQI over the last thirty beats, no auto-event is emitted. The floor sits at 0.50, not higher, because a PVC's own odd shape drags the rolling SQI down; too strict a gate would block the very beats it should catch. Under 0.50 the RR series is unreliable enough that a detector would invent variability that is not there.</p>
+      </article>
+      <article class="algo">
+        <header><h3>3. Prematurity + pause cross-check</h3><span class="unit">shape or timing</span></header>
+        <p>The PVC compensatory-pause detector needs a pause that sums with the early RR to roughly 2 x baseline, plus either a QRS shape unlike the dominant sinus template or a beat at least 20 % early. Requiring shape alone missed PVCs the classifier had merged into sinus; the timing criterion recovers them. Respiratory sinus arrhythmia (8-10 % RR swing at the breathing rate) still falls below the bar and is filtered out.</p>
+      </article>
+      <article class="algo">
+        <header><h3>Pan-Tompkins stall recovery</h3><span class="unit">auto-recalibrate</span></header>
+        <p>When the R-peak detector has not seen a beat in two seconds, the signal-peak estimate gently decays toward the noise estimate so the threshold relaxes. Plus a full threshold reset at the end of the ten-second warmup so pairing artefacts cannot lock the detector high.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- =================== HONEST LIMITS =================== -->
+<section id="honest" class="block alt">
+  <div class="wrap two-col">
+    <div>
+      <p class="kicker">Where RytmoECG fails</p>
+      <h2>Plainly.</h2>
+      <ul class="bad">
+        <li>P-wave detection is unreliable on single-lead; we cannot separate atrial flutter from AF.</li>
+        <li>Paced rhythms are explicitly flagged as out of scope.</li>
+        <li>QTc on a noisy T-wave at 130 Hz is a trend marker, not clinical.</li>
+        <li>AF detector at F1 0.81 ( CinC 2017 holdout ); field accuracy depends on your signal quality.</li>
+        <li>None of this is medical advice. If something feels wrong, see a clinician.</li>
+      </ul>
+    </div>
+    <div>
+      <p class="kicker">What RytmoECG will never do</p>
+      <h2>Promises.</h2>
+      <ul class="good">
+        <li>Sell your data; the data never leaves the device unless you tap Share.</li>
+        <li>Talk to a server we control; there is none.</li>
+        <li>Score you against other users; comparisons are only with your own baseline.</li>
+        <li>Pretend a chest strap replaces a cardiologist.</li>
+        <li>Hide its math; every algorithm has a reference paper inside the app.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- =================== FAQ =================== -->
+<section id="faq" class="block alt">
+  <div class="wrap">
+    <p class="kicker">Questions people actually ask</p>
+    <h2>Polar H10, PVCs, and what this app is not.</h2>
+    <p class="section-lead">
+      Short, honest answers. The same wording is marked up for search engines, so
+      if you found this page by asking one of these, you are in the right place.
+    </p>
+
+    <div class="faq">
+      <details class="faq-item">
+        <summary>Does the Polar H10 record an ECG?</summary>
+        <p>The Polar H10 streams a raw single-lead ECG at 130 Hz over Bluetooth, but it does not store or display it on its own. RytmoECG receives that stream on your iPhone, draws it as a live ECG strip on real millimetre-paper scale, and analyses every beat on-device.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Can I count PVCs or track palpitations with a chest strap?</summary>
+        <p>Yes. RytmoECG flags premature ventricular contractions (PVCs), premature atrial contractions (PACs), couplets, bigeminy, pauses and irregular rhythm, and records a 30-second ECG clip around each one so you can see exactly what happened. It is a wellness tool for observing patterns over time, not a diagnosis.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Is this a medical device or a Holter monitor?</summary>
+        <p>No. RytmoECG is a wellness app, not a medical device and not a certified Holter monitor. It does not diagnose, treat or screen for any condition. Think of it as a transparent, long-recording way to observe your own heart rhythm and export a PDF to show a clinician; a Holter-style experience, not a replacement for one.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Does my ECG data leave my phone?</summary>
+        <p>No. Every algorithm runs on your iPhone. There is no cloud server and nothing is uploaded unless you explicitly tap Share to export a PDF or CSV.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What do I need to use it?</summary>
+        <p>An iPhone on iOS 17 or later and a Polar H10 chest strap. No subscription is required to record and review your own ECG.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Can I export the raw signal for research?</summary>
+        <p>Yes. Any session exports as CSV (time, RR, HR, SQI per beat) or EDF, plus a PDF report. The data drops straight into Python, R, MATLAB or EDFbrowser.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- =================== DOWNLOAD =================== -->
+<section id="download" class="block download">
+  <div class="wrap center">
+    <p class="kicker">Get it</p>
+    <h2>Download RytmoECG.</h2>
+    <p class="section-lead">
+      iPhone, iOS 17 or later. Requires a Polar H10 chest strap.
+    </p>
+    <a class="btn primary big" href="#">App Store; coming soon</a>
+    <p class="micro">
+      RytmoECG is a wellness app; not a medical device. It does not diagnose,
+      treat, or screen for any condition. If you have chest pain, shortness of
+      breath, or persistent palpitations, contact emergency services or your
+      physician.
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap two-col">
+    <div>
+      <p class="brand small">RytmoECG</p>
+      <p class="micro">Built solo. No VC, no medical claims, no dark patterns.</p>
+    </div>
+    <div>
+      <p class="micro">
+        Mental-health helpline in Poland; 116 123 ( free, anonymous, twenty-four
+        seven ). Outside Poland, your local equivalent is one search away.
+      </p>
+      <p class="micro">Contact; b@snafux.pl</p>
+    </div>
+  </div>
+</footer>
+
+<script src="demo.js"></script>
+</body>
+</html>

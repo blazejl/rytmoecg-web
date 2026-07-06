@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07090D"/>
+      <stop offset="1" stop-color="#0B0E13"/>
+    </linearGradient>
+    <pattern id="grid-sm" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M 24 0 L 0 0 0 24" fill="none" stroke="rgba(110,231,183,0.05)" stroke-width="1"/>
+    </pattern>
+    <pattern id="grid-lg" width="120" height="120" patternUnits="userSpaceOnUse">
+      <rect width="120" height="120" fill="url(#grid-sm)"/>
+      <path d="M 120 0 L 0 0 0 120" fill="none" stroke="rgba(110,231,183,0.10)" stroke-width="1.2"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid-lg)"/>
+
+  <!-- Live dot + eyebrow -->
+  <circle cx="90" cy="118" r="7" fill="#6EE7B7"/>
+  <text x="112" y="125" font-family="Geist, system-ui, sans-serif" font-size="26" fill="#9099A8" letter-spacing="1">Polar H10 ECG app &#183; on-device</text>
+
+  <!-- Wordmark -->
+  <text x="88" y="250" font-family="Geist, system-ui, sans-serif" font-size="88" font-weight="600" fill="#ECEEF2">RytmoECG</text>
+
+  <!-- Tagline -->
+  <text x="90" y="330" font-family="Geist, system-ui, sans-serif" font-size="40" font-weight="400" fill="#ECEEF2">Your heart, in numbers you can audit.</text>
+  <text x="90" y="382" font-family="Geist, system-ui, sans-serif" font-size="26" fill="#9099A8">HRV &#183; PVC &amp; pause counting &#183; palpitation recording &#183; no cloud, no diagnosis</text>
+
+  <!-- ECG trace across the lower third -->
+  <path d="M0,520 L120,520 Q150,500 180,520 L250,520 L268,532 L286,430 L304,600 L322,522 L350,520 Q400,495 450,520 L560,520
+           L578,532 L596,430 L614,600 L632,522 L660,520 Q710,495 760,520 L870,520
+           L888,532 L906,430 L924,600 L942,522 L970,520 Q1020,495 1070,520 L1200,520"
+        fill="none" stroke="#6EE7B7" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
